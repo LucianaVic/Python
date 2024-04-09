@@ -1,0 +1,187 @@
+#Space Invaders 
+#By Carolina e Luciana, monitora Nayara
+import turtle #importando a biblioteca tartaruga
+import os #quando você precisar mexer no sistema de arquivos.
+import math #importar o módulo de matemática 
+import random #importando a posição aleatória
+
+#Configurar a tela
+wn = turtle.Screen() #criação do objeto de tela
+wn.bgcolor ("black") #cor de fundo
+wn.title("Space Invaders") #título da janela
+
+#Desenhar a borda
+border_pen = turtle.Turtle()#Criação da caneta
+border_pen.speed(0) #fazendo um atributo de velocidade a caneta, 0 é o mais rápido
+border_pen.color ("white")# definindo a cor da borda em branco
+border_pen.penup()# atributo do sentido da caneta
+border_pen.setposition(-300,-300)#definir a posição ps. o centro é zero
+border_pen.pendown() #criação de outra caneta 
+border_pen.pensize(3) #definir o tamanho da caneta
+for side in range(4): #aqui desenhei um quadrado
+    border_pen.fd (600)#bordar da caneta (nao entendi direito mais acho que é para o espaçamento dela no jogo)
+    border_pen.lt (90) #para indicar que o quadrado vai ter 90graus
+border_pen.hideturtle()    
+
+#Definir a pontuação para 0
+score = 0 #pontuação é igual a zero
+
+#Tirar o placar
+score_pen = turtle.Turtle() #criando uma caneta
+score_pen.speed(0) #velocidade que queremos
+score_pen.color("white")#cor
+score_pen.penup()
+score_pen.setposition(-290, 280) #nao quero que a caneta desenhe nada nós vamos usar a caneta e vamos usar para definir a posição
+scorestring = "Score: %s" %score #criar uma pequena pontuação igual %
+score_pen.write(scorestring, False, align="left", font=("Arial", 14, "normal"))  #vamos usar o método, então vamos escrever o string de pontuação
+score_pen.hideturtle()  #esconder a tartaruga pq não precisa ver isso 
+
+#Crie a tartaruga de jogo
+player = turtle.Turtle()#criando um objeto de tartaruga
+player.color("blue") #atribuindo a cor
+player.shape("triangle")#aqui dando a forma
+player.penup()#atributo do sentido da caneta
+player.speed(0)#fazendo um atributo de velocidade
+player.setposition(0, -250) #definindo a posiçao do jogador
+player.setheading(90)#definindo a decolagem
+
+playerspeed = 15 #criando uma variável de velocidade e é 15 pq funciona muito bem
+
+#Escolher o número de inimigos
+number_of_enemies = 5 #o número de inimigos é igual a cinco
+#crie uma lista vazia de inimigos
+enemies = [] #criei uma lista vazia com o nome de inimigos
+
+#Adicione inimigos à lista
+for i in range(number_of_enemies):#entao vamos usar um loop,
+   #Criar o inimigo
+   enemies.append(turtle.Turtle())#então vamos criar os inimigos aqui
+
+for enemy in enemies: #para inimigo vire inimigos
+    enemy.color("red")       # a cor do inimigo
+    enemy.shape("circle")    # a forma do inimigo
+    enemy.penup()  
+    enemy.speed(0)           #velociade
+    x = random.randint(-200, 200) #x é igual a r neste aleatório
+    y = random.randint(100, 250) #y é igual a r neste aleatório
+    enemy.setposition(x, y) #posição do inimigo
+
+enemyspeed = 2 #o tamamho do inimigo será 2px
+
+#Crie a bala do jogador
+bullet = turtle.Turtle() #Criando uma objeto de tartaruga com o nome de bala
+bullet.color("yellow")   #dando uma cor
+bullet.shape("triangle")    # a forma da bala
+bullet.penup()#para desenha uma linha quando a bala for lançada, de modo que vamos fazer uma caneta para cima 
+bullet.speed(0)#fazendo a velocidade zero para ser mais rápido possível
+bullet.setheading(90)#ele é em 90graus pq ele vai atirar para cima
+bullet.shapesize(0.5, 0.5)#tamanho da bala, pq não queremo uma bala do mesmo tamanho do jogador
+bullet.hideturtle()#quando o jogo começar queremos que a bala esteja escondida
+
+bulletspeed = 20   #velocidade da bala e queremos que as balas se movam muito rápido em comparação de tudo
+
+#definir estado de marcador
+#pronto - pronto para disparar o fogo
+#fogo - bala está disparando
+bulletstate = "ready" #aqui é o estado de balas é igual a ponto
+
+#Movendo o jogador para esquerda e direita
+def move_left():      #movendo para a esquerda 
+    x = player.xcor() #x é a coordenada atual x é o jogador   
+    x -= playerspeed  # vai subtrair o valor atual de x, assim quando começarmos o jogo x é 0 x menor igual a 15
+    if x < -280:      # se estiver menor que o valor que o  jogador vai ficar dentro da borda branca
+        x = - 280
+    player.setx(x)   # definindo um jogador para X, vai subtrair a velocidad3 e mudar a localizaçao dos jogadores e a coordenada x em menos
+
+def move_right():     #movendo para a esquerda
+    x = player.xcor()  #x é a coordenada atual x é o jogador  
+    x += playerspeed  # vai somar o valor atual de x, assim quando começarmos o jogo x é 0 x menor igual a 15
+    if x > 280:       # se estiver menor que o valor que o  jogador vai ficar dentro da borda branca
+        x = 280
+    player.setx(x)    # definindo um jogador para X, vai soma a velocidade e mudar a localizaçao dos jogadores e a coordenada x em menos
+
+def fire_bullet():    #criando uma função chamada fogo bala
+    #declarar bulletstate como um global se precisar mudar
+    global bulletstate
+    if bulletstate == "ready": #se o estado da bala está pronto, então podemos fazer todas essas coisas
+        bulletstate = "fire" #mudar o estado da bala pq agr vamos atirar bala estado é igual a fogo,
+        #mover a bala para o jogador logo acima
+        x = player.xcor()#vamos obter a coordenada x do jogador
+        y = player.ycor() + 10 #e a coordenada y do jogador
+        bullet.setposition(x, y) #que vão definir a posição da bala
+        bullet.showturtle() #precisamos mostrar a tartaruga
+
+def isCollision(t1, t2): #sobre a colissao
+    distance = math.sqrt(math.pow(t1.xcor()-t2.xcor(),2)+math.pow(t1.ycor()-t2.ycor(),2))  #a distância equivale a matematica quadrado da raiz, fórmula de pitagoras
+    if distance < 15:
+        return True
+    else:
+        return False
+
+#Criar ligação de teclado
+turtle.listen() #para a tartagura (objeto) ouvir as ações do teclado
+turtle.onkey(move_left, "Left") #método Anki para a funçao mover para a esquerda e a chabe é deixado assim, isso é o que vai acontecer quando eu empurro a tecla da seta esquerda
+turtle.onkey(move_right, "Right")
+turtle.onkey(fire_bullet, "space") # definindo a tecla espaço para lançar o fogo
+
+
+#loop principal do jogo 
+while True: #repita enquanto for verdadeiro
+
+    for enemy in enemies: #para inimigo em inimigos assim quando vc faz a mesma coisa com todos eles
+        #Mover o inimigo
+        x = enemy.xcor()   #vamos usar x para a coordenada do inimigo
+        x += enemyspeed   #antes que obtermos a coordenada x atual do inimigo nós adicionamos a velocidade do inimigo que neste casa é 2
+        enemy.setx(x)
+
+        #Move todos os inimigos para baixo e para baixo
+        if enemy.xcor() > 280: #se o inimigo for maior de 280
+            #Move todos os inimigos para baixo
+            for e in enemies: #para e no enemies, aqui é para dar margem a lateral do inimigo
+                y = e.ycor()    #mudar a coorddenada para poder descer 
+                y -= 40 #toda vez que ele atinguir a borda vai cair 40px
+                e.sety(y) #a nova coordenada de y 
+            #Mudar direção do inimigo
+            enemyspeed *= -1  
+           
+        if enemy.xcor()< -280: #se o inimigo for menor de 280
+            #Move todos os inimigos para baixo
+            for e in enemies: #para e no enemies, aqui é para dar margem a lateral do inimigo
+                y = e.ycor()    
+                y -= 40
+                e.sety(y)
+            #Muda a direção do inimigo    
+            enemyspeed *= -1
+
+        #verifique se há uma colisão entre a bala e o inimigo    
+        if isCollision(bullet, enemy):  #se bater no inimigo
+            #redefinir a bala
+            bullet.hideturtle()
+            bulletstate = "ready"
+            bullet.setposition(0, -400)
+            #redefinir o inimigo
+            x = random.randint(-200, 200) #x é igual a r neste aleatório
+            y = random.randint(100, 250) #y é igual a r neste aleatório
+            enemy.setposition(x, y) #posição do inimigo
+            #atualize o score
+            score += 10 #aqui vai acrescentar 10 pontos a cada vez que a bala chegar ni inimigo
+            scorestring = "Score: %s" %score
+            score_pen.clear() #a caneta que vai limpar o score
+            score_pen.write(scorestring, False, align="left", font=("Arial", 14, "normal"))  #vamos usar o método, então vamos escrever o string de pontuação
+
+        if isCollision(player, enemy): #se o inimigo colidir com o jogador faça
+            player.hideturtle() 
+            enemy.hideturtle()
+            print ("Game Over XD")
+            breakpointk 
+
+    #Mover a bala      #ESSA PARTE FAZ SER LERDO 
+        if bulletstate == "fire": #queremos para mover a bala se o estado da bala é igual a fogo 
+            y = bullet.ycor() #obter a atual coordenada de y para adicionar a velocidade
+            y += bulletspeed
+            bullet.sety(y)
+             
+    #Verifique se a bala chegou ao topo
+    if bullet.ycor() > 275: # se o núcleo do ponto de bala Y é maior do que; faça
+       bullet.hideturtle()
+       bulletstate = "ready"
