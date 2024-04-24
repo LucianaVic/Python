@@ -1,5 +1,5 @@
 #Space Invaders 
-#By Carolina e Luciana, monitora Nayara
+#By Luciana
 import turtle #importando a biblioteca tartaruga
 import os #quando você precisar mexer no sistema de arquivos.
 import math #importar o módulo de matemática 
