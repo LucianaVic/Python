@@ -174,7 +174,7 @@ while True: #repita enquanto for verdadeiro
             player.hideturtle() 
             enemy.hideturtle()
             print ("Game Over XD")
-            breakpointk
+            breakpoint
 
     #Mover a bala      #ESSA PARTE FAZ SER LERDO 
         if bulletstate == "fire": #queremos para mover a bala se o estado da bala é igual a fogo 
