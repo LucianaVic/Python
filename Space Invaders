@@ -1,5 +1,5 @@
 #Space Invaders 
-#By Luciana
+#By Luciana, versão 2.0
 import turtle #importando a biblioteca tartaruga
 import os #quando você precisar mexer no sistema de arquivos.
 import math #importar o módulo de matemática 
@@ -8,7 +8,8 @@ import random #importando a posição aleatória
 #Configurar a tela
 wn = turtle.Screen() #criação do objeto de tela
 wn.bgcolor ("black") #cor de fundo
-wn.title("Space Invaders") #título da janela
+wn.bgpic ("galaxia.gif") #plano de fundo
+wn.title("Recreate Space Invaders") #título da janela
 
 #Desenhar a borda
 border_pen = turtle.Turtle()#Criação da caneta
@@ -173,7 +174,7 @@ while True: #repita enquanto for verdadeiro
             player.hideturtle() 
             enemy.hideturtle()
             print ("Game Over XD")
-            breakpointk 
+            breakpointk
 
     #Mover a bala      #ESSA PARTE FAZ SER LERDO 
         if bulletstate == "fire": #queremos para mover a bala se o estado da bala é igual a fogo 
